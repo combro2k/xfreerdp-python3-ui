@@ -259,7 +259,3 @@ class RDP(Gtk.Application):
             self._qtile = Client()
 
         return self._qtile
-
-if __name__ == '__main__':
-    app = RDP()
-    app.run(sys.argv)
