@@ -1,7 +1,6 @@
 from distutils.core import setup
 
 setup(
-<<<<<<< HEAD
     name='xfreerdpui',
     version='0.1dev',
     packages=['xfreerdpui',],
