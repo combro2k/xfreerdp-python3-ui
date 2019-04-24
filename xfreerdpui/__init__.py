@@ -42,9 +42,6 @@ class RDPWindow(Gtk.ApplicationWindow):
 
         return False
 
-#    def _history_update(self, widget, event):
-#        print(widget, widget.prop.popup_shown)
-
     def present(self):
         qscreen = self.qtile.screen
         qinfo = qscreen.info()
@@ -100,7 +97,6 @@ class RDPWindow(Gtk.ApplicationWindow):
 
         self.btn_connect.connect("clicked", self.cmd_connect)
         self.host.connect('key-press-event', self._key_press_event)
-#        self.host.connect('popup', self._history_update)
         self.username.connect('key-press-event', self._key_press_event)
         self.password.connect('key-press-event', self._key_press_event)
         self.password_reveal.connect("clicked", self.cmd_password_reveal)
@@ -232,8 +228,6 @@ class RDPWindow(Gtk.ApplicationWindow):
             with open(self._history_file, 'w') as f:
                 for l in history:
                     f.write('%s\n' % (l))
-
-            #f.write('%s\n' % (value))
 
 class RDP(Gtk.Application):
     _qtile = None

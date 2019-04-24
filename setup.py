@@ -11,9 +11,7 @@ setup(
     entry_points = {
         'console_scripts': ['xfreerdpui=xfreerdpui.xfreerdpui:main'],
     },
-    extra_require={
-        ':"linux" in sys_platform': [
-            'gtk3'
-        ]
-    },
+    install_reuires=[
+        'gtk3'                                                                                                                                                     
+    ],
 )
