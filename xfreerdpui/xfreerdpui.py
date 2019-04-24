@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
-
 import sys
 from xfreerdpui import RDP
 
-if __name__ == '__main__':                                                                                                                                             
+def main():
     app = RDP()                                                                                                                                                        
     app.run(sys.argv)
