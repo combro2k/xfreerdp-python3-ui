@@ -198,8 +198,6 @@ class RDPWindow(Gtk.ApplicationWindow):
             self.hide()
 
             try:
-                print(cmd)
-
                 FNULL = open(os.devnull, 'w')
                 Popen(['sh', '-c', cmd], shell=False, stdout=FNULL, stderr=STDOUT)
 
