@@ -12,6 +12,7 @@ setup(
         'console_scripts': ['xfreerdpui=xfreerdpui.xfreerdpui:main'],
     },
     install_reuires=[
-        'gtk3'                                                                                                                                                     
+        'gtk3',
+        'qtile',
     ],
 )

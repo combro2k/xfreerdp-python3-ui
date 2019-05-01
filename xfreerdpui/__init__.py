@@ -6,7 +6,7 @@ gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gio, Gtk, Gdk
 from libqtile.command import Client
-from subprocess import Popen
+from subprocess import Popen, STDOUT
 from os.path import expanduser
 
 class RDPWindow(Gtk.ApplicationWindow):
@@ -171,28 +171,35 @@ class RDPWindow(Gtk.ApplicationWindow):
             if not (host and username and password):
                 return False
 
+            params = [
+                '-decorations',
+                '+heartbeat',
+                '+clipboard',
+                '+async-update',
+                '/compression-level:2',
+                '/cert-ignore',
+                '/drive:home,%s' % (expanduser('~')),
+                '/v:%s' % (host),
+                '/u:%s' % (username),
+                '/p:%s' % (password),
+            ]
+
             if self.fullscreen.get_active():
-                cmd = f'/usr/bin/xfreerdp /cert-ignore /v:%s /f /u:%s /p:%s /drive:home,%s +clipboard' % (
-                        host,
-                        username,
-                        password,
-                        expanduser('~'),
-                )
+                cmd = f'/usr/bin/xfreerdp /f %s' % (' '.join(params))
             else:
-                cmd = f'/usr/bin/xfreerdp /cert-ignore /v:%s /w:%s /h:%s /u:%s /p:%s /drive:home,%s +clipboard' % (
-                        host,
+                cmd = f'/usr/bin/xfreerdp %s /w:%s /h:%s' % (
+                        ' '.join(params),
                         self.width,
                         self.height,
-                        username,
-                        password,
-                        expanduser('~'),
                 )
 
             self.hide()
 
             try:
                 print(cmd)
-                Popen(['sh', '-c', cmd], shell=False)
+
+                FNULL = open(os.devnull, 'w')
+                Popen(['sh', '-c', cmd], shell=False, stdout=FNULL, stderr=STDOUT)
 
                 self.destroy()
             except Exception as e:
