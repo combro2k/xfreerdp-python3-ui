@@ -11,7 +11,10 @@ setup(
     license='MIT',
     long_description=open('README.txt').read(),
     url='https://github.com/combro2k/xfreerdp-python3-ui/',
-    scripts=['bin/xfreerdpui'],
+    entry_points = {
+        'console_scripts': ['xfreerdpui=xfreerdpui.xfreerdpui:main'],
+    },
+#    scripts=['bin/xfreerdpui'],
     install_reuires=[
         'gtk3',
         'qtile',
