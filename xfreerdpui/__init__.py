@@ -48,7 +48,7 @@ class RDPWindow(Gtk.ApplicationWindow):
         qbar = qscreen.bar['top'].info()
 
         self.width = qinfo['width']
-        self.height = qinfo['height'] - qbar['size']
+        self.height = qinfo['height'] - (qbar['size'] + 1)
 
         host_entries = Gtk.ListStore(str)
         for i in self.history:
@@ -163,7 +163,7 @@ class RDPWindow(Gtk.ApplicationWindow):
 
             socket.gethostbyname(host)
 
-            self.add_history(host) 
+            self.add_history(host)
 
             username = self.username.get_text() or 'Administrator'
             password = self.password.get_text()
@@ -173,10 +173,14 @@ class RDPWindow(Gtk.ApplicationWindow):
 
             params = [
                 '-decorations',
+                '-offscreen-cache',
+                '-glyph-cache',
                 '+heartbeat',
                 '+clipboard',
                 '+async-update',
-                '+gfx-progressive',
+                '+gfx-small-cache',
+                '+multitransport',
+#                '+gfx-progressive',
                 '/compression-level:2',
                 '/gdi:sw',
                 '/cert-ignore',
@@ -260,3 +264,7 @@ class RDP(Gtk.Application):
             self._qtile = Client()
 
         return self._qtile
+
+if __name__ == "__main__":
+    app = RDP()
+    app.run(sys.argv)
