@@ -8,7 +8,7 @@ setup(
     author_email='git@vmaurik.nl',
     version='0.1dev',
     packages=['xfreerdpui',],
-    license='Creative Commons Attribution-Noncommercial-Share Alike license',
+    license='MIT',
     long_description=open('README.txt').read(),
     url='https://github.com/combro2k/xfreerdp-python3-ui/',
     entry_points = {
@@ -18,4 +18,5 @@ setup(
         'gtk3',
         'qtile',
     ],
+    python_requires='>=3',
 )
