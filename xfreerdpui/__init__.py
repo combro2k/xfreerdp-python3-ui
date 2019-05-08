@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, gi, socket, os
+import sys, gi, socket, os, pprint
 
 gi.require_version('Gtk', '3.0')
 
@@ -115,9 +115,7 @@ class RDPWindow(Gtk.ApplicationWindow):
             use_underline=True,
             xalign=0,
         ), True, True, 0)
-
         hbox1.pack_start(self.host, True, True, 0)
-
         hbox2.pack_start(Gtk.Label(
             visible=True,
             label='_Username:',
@@ -136,7 +134,6 @@ class RDPWindow(Gtk.ApplicationWindow):
         hbox3.pack_start(self.username, True, True, 0)
         hbox3.pack_start(self.password, True, True, 0)
         hbox3.pack_start(self.password_reveal, True, True, 0)
-
         hbox4.pack_start(self.fullscreen, True, True, 0)
 
         vbox.pack_start(hbox0, True, True, 0)
@@ -144,18 +141,12 @@ class RDPWindow(Gtk.ApplicationWindow):
         vbox.pack_start(hbox2, True, True, 0)
         vbox.pack_start(hbox3, True, True, 0)
         vbox.pack_start(hbox4, True, True, 0)
-
         vbox.pack_start(self.btn_connect, True, True, 0)
-
         vbox.show()
 
         self.add(vbox)
 
-        self.host.grab_focus()
-
         super().present()
-
-        self.set_focus(self.host)
 
     def cmd_connect(self, button):
         try:
