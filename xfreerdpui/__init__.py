@@ -1,16 +1,26 @@
 #!/usr/bin/env python3
 
-import sys, gi, socket, os, pprint
+import os
+import socket
+import sys
+
+import gi
 
 gi.require_version('Gtk', '3.0')
 
-from gi.repository import Gio, Gtk, Gdk
+from gi.repository import (
+    Gio,
+    Gtk,
+    Gdk
+)
 from libqtile.command import Client
-from subprocess import Popen, STDOUT
+from subprocess import (
+    Popen,
+    STDOUT
+)
 from os.path import expanduser
 
 class RDPWindow(Gtk.ApplicationWindow):
-
     _history_file = expanduser('~/.rdp_history')
     qtile = None
 
@@ -57,6 +67,7 @@ class RDPWindow(Gtk.ApplicationWindow):
 
         completion = Gtk.EntryCompletion(
             model=host_entries,
+            inline_completion=True,
         )
         completion.set_text_column(0)
 
@@ -171,7 +182,7 @@ class RDPWindow(Gtk.ApplicationWindow):
                 '+async-update',
                 '+gfx-small-cache',
                 '+multitransport',
-#                '+gfx-progressive',
+                #                '+gfx-progressive',E4
                 '/compression-level:2',
                 '/gdi:sw',
                 '/cert-ignore',
@@ -185,9 +196,9 @@ class RDPWindow(Gtk.ApplicationWindow):
                 cmd = f'/usr/bin/xfreerdp /f %s' % (' '.join(params))
             else:
                 cmd = f'/usr/bin/xfreerdp %s /w:%s /h:%s' % (
-                        ' '.join(params),
-                        self.width,
-                        self.height,
+                    ' '.join(params),
+                    self.width,
+                    self.height,
                 )
 
             self.hide()
@@ -231,14 +242,15 @@ class RDPWindow(Gtk.ApplicationWindow):
                 for l in history:
                     f.write('%s\n' % (l))
 
+
 class RDP(Gtk.Application):
     _qtile = None
 
     def __init__(self, qtile=None):
         Gtk.Application.__init__(self,
-            application_id="org.qtile.rdp",
-            flags=Gio.ApplicationFlags.FLAGS_NONE,
-        )
+                                 application_id="org.qtile.rdp",
+                                 flags=Gio.ApplicationFlags.FLAGS_NONE,
+                                 )
 
         if qtile is not None:
             self._qtile = qtile
