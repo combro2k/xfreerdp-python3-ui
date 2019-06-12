@@ -21,7 +21,7 @@ from subprocess import (
 from os.path import expanduser
 
 class RDPWindow(Gtk.ApplicationWindow):
-    _history_file = expanduser('~/.rdp_history')
+    _history_file = expanduser('~/.config/xfreerdpui/history')
     qtile = None
 
     def __init__(self, *args, **kwargs):
@@ -235,8 +235,13 @@ class RDPWindow(Gtk.ApplicationWindow):
         history = self.history
 
         if not value in history:
+            basedir = os.path.dirname(self._history_file)
+
             history.append(value)
             history = sorted(history)
+
+            if not os.path.exists(basedir):
+                os.makedirs(basedir)
 
             with open(self._history_file, 'w') as f:
                 for l in history:
