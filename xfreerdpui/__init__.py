@@ -77,7 +77,6 @@ class RDPWindow(Gtk.ApplicationWindow):
             model=host_entries,
             entry_text_column=0,
         )
-
         self.host.get_child().set_completion(completion)
         self.host.get_child().set_placeholder_text('Hostname')
 
@@ -182,7 +181,7 @@ class RDPWindow(Gtk.ApplicationWindow):
                 '+async-update',
                 '+gfx-small-cache',
                 '+multitransport',
-                #                '+gfx-progressive',E4
+                # '+gfx-progressive',
                 '/compression-level:2',
                 '/gdi:sw',
                 '/cert-ignore',
@@ -253,9 +252,9 @@ class RDP(Gtk.Application):
 
     def __init__(self, qtile=None):
         Gtk.Application.__init__(self,
-                                 application_id="org.qtile.rdp",
-                                 flags=Gio.ApplicationFlags.FLAGS_NONE,
-                                 )
+            application_id="org.qtile.rdp",
+            flags=Gio.ApplicationFlags.FLAGS_NONE,
+            )
 
         if qtile is not None:
             self._qtile = qtile
