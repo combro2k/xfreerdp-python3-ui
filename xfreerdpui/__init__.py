@@ -16,7 +16,8 @@ from gi.repository import (
 from libqtile.command import Client
 from subprocess import (
     Popen,
-    STDOUT
+    STDOUT,
+    PIPE
 )
 from os.path import expanduser
 
@@ -71,12 +72,18 @@ class RDPWindow(Gtk.ApplicationWindow):
         )
         completion.set_text_column(0)
 
+        self.message = Gtk.Label(
+            label="",
+            visible=True,
+        )
+
         self.host = Gtk.ComboBox(
             visible=True,
             has_entry=True,
             model=host_entries,
             entry_text_column=0,
         )
+
         self.host.get_child().set_completion(completion)
         self.host.get_child().set_placeholder_text('Hostname')
 
@@ -146,6 +153,7 @@ class RDPWindow(Gtk.ApplicationWindow):
         hbox3.pack_start(self.password_reveal, True, True, 0)
         hbox4.pack_start(self.fullscreen, True, True, 0)
 
+        vbox.pack_start(self.message, True, True, 0)
         vbox.pack_start(hbox0, True, True, 0)
         vbox.pack_start(hbox1, True, True, 0)
         vbox.pack_start(hbox2, True, True, 0)
@@ -181,7 +189,7 @@ class RDPWindow(Gtk.ApplicationWindow):
                 '+async-update',
                 '+gfx-small-cache',
                 '+multitransport',
-                # '+gfx-progressive',
+                # '+gfx-progressive',E4
                 '/compression-level:2',
                 '/gdi:sw',
                 '/cert-ignore',
@@ -200,18 +208,35 @@ class RDPWindow(Gtk.ApplicationWindow):
                     self.height,
                 )
 
+
             self.hide()
 
             try:
                 FNULL = open(os.devnull, 'w')
-                Popen(['sh', '-c', cmd], shell=False, stdout=FNULL, stderr=STDOUT)
+                p = Popen([cmd], shell=True, stdout=PIPE, stderr=PIPE)
+                outs, errs = p.communicate(timeout=None)
+               
+                print(outs.decode("utf-8"))
+                print(errs.decode("utf-8"))
 
-                self.destroy()
+                if p.returncode == 131:
+                    self.message.set_label('Username and/or password is wrong')
+                    self.show()
+
+                elif p.returncode == 133:
+                    self.message.set_label('Host is not listening to RDP connection')
+                    self.show()
+
+                else:
+                    self.destroy()
+
             except Exception as e:
                 print(e)
+                self.destroy()
 
         except Exception as e:
             print(e)
+            self.destroy()
 
     def cmd_password_reveal(self, button):
         self.password.set_visibility(button.get_active())
@@ -252,9 +277,9 @@ class RDP(Gtk.Application):
 
     def __init__(self, qtile=None):
         Gtk.Application.__init__(self,
-            application_id="org.qtile.rdp",
-            flags=Gio.ApplicationFlags.FLAGS_NONE,
-            )
+                                 application_id="org.qtile.rdp",
+                                 flags=Gio.ApplicationFlags.FLAGS_NONE,
+                                 )
 
         if qtile is not None:
             self._qtile = qtile
