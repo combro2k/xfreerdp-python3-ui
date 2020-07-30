@@ -13,7 +13,9 @@ from gi.repository import (
     Gtk,
     Gdk
 )
-from libqtile.command import Client
+#from libqtile.command import Client
+from libqtile.command_client import CommandClient
+
 from subprocess import (
     Popen,
     STDOUT,
@@ -54,12 +56,12 @@ class RDPWindow(Gtk.ApplicationWindow):
         return False
 
     def present(self):
-        qscreen = self.qtile.screen
-        qinfo = qscreen.info()
-        qbar = qscreen.bar['top'].info()
+        #qscreen = self.qtile.screen
+        #qinfo = qscreen.info()
+        qbar = {} #qscreen.bar['top'].info()
 
-        self.width = qinfo['width']
-        self.height = qinfo['height'] - (qbar['size'] + 1)
+        self.width = 1920 #qinfo['width']
+        self.height = 1080 - 28 #qinfo['height'] - (qbar['size'] + 1)
 
         host_entries = Gtk.ListStore(str)
         for i in self.history:
@@ -293,7 +295,8 @@ class RDP(Gtk.Application):
     @property
     def qtile(self):
         if self._qtile is None:
-            self._qtile = Client()
+            pass
+            #self._qtile = CommandClient()
 
         return self._qtile
 
