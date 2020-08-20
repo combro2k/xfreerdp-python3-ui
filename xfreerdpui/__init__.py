@@ -13,8 +13,10 @@ from gi.repository import (
     Gtk,
     Gdk
 )
-#from libqtile.command import Client
+
+from libqtile.command_interface import CommandInterface, IPCCommandInterface
 from libqtile.command_client import CommandClient
+from libqtile.ipc import Client, find_sockfile
 
 from subprocess import (
     Popen,
@@ -56,12 +58,14 @@ class RDPWindow(Gtk.ApplicationWindow):
         return False
 
     def present(self):
-        #qscreen = self.qtile.screen
-        #qinfo = qscreen.info()
-        qbar = {} #qscreen.bar['top'].info()
+        from pprint import pprint
 
-        self.width = 1920 #qinfo['width']
-        self.height = 1080 - 28 #qinfo['height'] - (qbar['size'] + 1)
+        qscreen = self.qtile.navigate('screen', None)
+        qinfo = qscreen.call('info')()
+
+        self.width = qinfo['width']
+        # need to get bar yet, but its an start
+        self.height = qinfo['height'] - 27
 
         host_entries = Gtk.ListStore(str)
         for i in self.history:
@@ -295,8 +299,7 @@ class RDP(Gtk.Application):
     @property
     def qtile(self):
         if self._qtile is None:
-            pass
-            #self._qtile = CommandClient()
+            self._qtile = CommandClient(command=IPCCommandInterface(Client(find_sockfile())))
 
         return self._qtile
 
