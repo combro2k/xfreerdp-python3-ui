@@ -14,9 +14,5 @@ setup(
     entry_points = {
         'console_scripts': ['xfreerdpui=xfreerdpui.xfreerdpui:main'],
     },
-#    scripts=['bin/xfreerdpui'],
-#    install_requires=[
-#        'qtile',
-#    ],
     python_requires='>=3',
 )
