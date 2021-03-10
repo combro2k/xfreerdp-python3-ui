@@ -14,14 +14,19 @@ from gi.repository import (
     Gdk
 )
 
-from libqtile.command_interface import CommandInterface, IPCCommandInterface
-from libqtile.command_client import CommandClient
-from libqtile.ipc import Client, find_sockfile
+try:
+    from libqtile.command_interface import CommandInterface, IPCCommandInterface
+    from libqtile.command_client import CommandClient
+    from libqtile.ipc import Client, find_sockfile
+    qtile_support = True
+except:
+    qtile_support = False
 
 from subprocess import (
     Popen,
     STDOUT,
-    PIPE
+    PIPE,
+    run,
 )
 from os.path import expanduser
 
@@ -60,12 +65,20 @@ class RDPWindow(Gtk.ApplicationWindow):
     def present(self):
         from pprint import pprint
 
-        qscreen = self.qtile.navigate('screen', None)
-        qinfo = qscreen.call('info')()
+        if qtile_support is True:
+            qscreen = self.qtile.navigate('screen', None)
+            screen_info = qscreen.call('info')()
+        else:
+            r = run(['sh', '-c', '/usr/bin/xrandr | awk \'/\*/ {print $1}\''], stdout=PIPE, universal_newlines=True)
+            s = r.stdout.lstrip().split('x', 2)
+            screen_info = {
+                'width': int(s[0]),
+                'height': int(s[1]),
+            }
 
-        self.width = qinfo['width']
+        self.width = screen_info['width']
         # need to get bar yet, but its an start
-        self.height = qinfo['height'] - 27
+        self.height = screen_info['height'] - 27
 
         host_entries = Gtk.ListStore(str)
         for i in self.history:
@@ -298,7 +311,7 @@ class RDP(Gtk.Application):
 
     @property
     def qtile(self):
-        if self._qtile is None:
+        if self._qtile is None and qtile_support is True:
             self._qtile = CommandClient(command=IPCCommandInterface(Client(find_sockfile())))
 
         return self._qtile
