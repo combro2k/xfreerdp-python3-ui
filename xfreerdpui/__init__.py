@@ -31,7 +31,12 @@ from subprocess import (
 from os.path import expanduser
 
 class RDPWindow(Gtk.ApplicationWindow):
+    # history file at homedir
     _history_file = expanduser('~/.config/xfreerdpui/history')
+
+    # extra settings in xfreerdpuirc
+    _xfreerdpuirc = expanduser('~/.config/xfreerdpui/xfreerdpuirc')
+
     qtile = None
 
     def __init__(self, *args, **kwargs):
@@ -208,7 +213,6 @@ class RDPWindow(Gtk.ApplicationWindow):
                 '+async-update',
                 '+gfx-small-cache',
                 '+multitransport',
-                # '+gfx-progressive',E4
                 '/compression-level:2',
                 '/gdi:sw',
                 '/cert-ignore',
@@ -217,6 +221,8 @@ class RDPWindow(Gtk.ApplicationWindow):
                 '/u:%s' % (username),
                 '/p:%s' % (password),
             ]
+
+            params.extend(self.xfreerdpuirc)
 
             if self.fullscreen.get_active():
                 cmd = f'/usr/bin/xfreerdp /f %s' % (' '.join(params))
@@ -227,6 +233,7 @@ class RDPWindow(Gtk.ApplicationWindow):
                     self.height,
                 )
 
+            print(cmd)
 
             self.hide()
 
@@ -259,6 +266,20 @@ class RDPWindow(Gtk.ApplicationWindow):
 
     def cmd_password_reveal(self, button):
         self.password.set_visibility(button.get_active())
+
+    @property
+    def xfreerdpuirc(self):
+        xfreerdpuirc = []
+
+        if not os.path.exists(self._xfreerdpuirc):
+            return xfreerdpuirc
+
+        with open(self._xfreerdpuirc, 'r') as f:
+            for l in sorted(f.read().splitlines()):                                                                   
+                if l not in xfreerdpuirc:
+                    xfreerdpuirc.append(l) 
+
+        return xfreerdpuirc
 
     @property
     def history(self):
